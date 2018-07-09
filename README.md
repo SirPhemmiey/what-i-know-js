@@ -415,7 +415,7 @@ In the examples above, `Referrence Error` happens because `a` and `b` are not in
 
 An integer can serve as an object key, but you cannot use it with the object dot notation. From the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Property_accessors#Dot_notation)
 
-> [To use dot notation], the property must be a valid JavaScript identifier, i.e. a sequence of alphanumerical characters, also including the underscore ("_") and dollar sign ("$"), that cannot start with a number. For example, `object.$1` is valid, while `object.1` is not.
+> To use dot notation, the property must be a valid JavaScript identifier, i.e. a sequence of alphanumerical characters, also including the underscore (`_`) and dollar sign (`$`), that cannot start with a number. For example, `object.$1` is valid, while `object.1` is not.
 
 ```js
 // continued
@@ -439,9 +439,9 @@ lead.name       // "Me"
 Or if you need to return an array or make access the current index in a callback
 
 ```js
-  Object.keys(obj).map(function(key, index) {
-    obj[key] = ... ;
- }
+Object.keys(obj).map(function(key, index) {
+  obj[key] = ... ;
+});
 ```
 
 ## Falsiness
@@ -654,7 +654,7 @@ window.foo;       // 1
 ```js
 function bar() {
   return 1;
-end
+}
 
 window.bar;       // function bar() { return 1; }
 ```
@@ -665,8 +665,8 @@ Read the code and the comments below and try to figure out the answer.
 
 ```js
 function help() {
-  return a;         // This line returns undefined. Shouldn't it return a ReferenceError. Why is that?
-  var a = "Help!";  // If you comment this code out, this function returns 123 instead of undefined.  Why?
+  return a;        // This line returns undefined. Shouldn't it return a ReferenceError. Why is that?
+  var a = "Help!"; // If you comment this code out, this function returns 123 instead of undefined.  Why?
 }
 
 var a = 123;  // undefined
@@ -1149,7 +1149,7 @@ $(function() {
     console.log($inputs);
   }
   ...
-}
+});
 // [Object, Object, Object, ... ]
 ```
 
@@ -1192,7 +1192,6 @@ As with many JS mysteries, the answer is revealed in the [MDN documentation on r
 > `arr.reduce(callback, [initialValue])`
 
 > The first time the callback is called, accumulator and currentValue can be one of two values. If initialValue is provided in the call to reduce, then accumulator will be equal to initialValue and currentValue will be equal to the first value in the array. If _no_ initialValue was provided, then *accumulator will be equal to the first value* in the array and *currentValue will be equal to the second*.
-```
 
 So we fell for the trap of assuming our accumulator was one thing ( an empty object) when it was actually another the first object (the `startX` key-value pair) in our collection. To correct this issue we simply supply an empty object as the initial value.
 
@@ -1252,6 +1251,7 @@ var = {
  start: function () {
    this.started = true;
  }
+};
 ```
 
 ### Cloning / copying objects
@@ -1290,7 +1290,7 @@ array     // [{ 'a': 1 }]
 
 How do we make this code work? It depends on how we create (clone or duplicated) `new_array`. We could try these two ways
 
-```
+```js
 var new_array= array.slice(0);                     
 new_array[0]['a'] = 2
 array // [{ 'a': 2 }]
@@ -1298,15 +1298,15 @@ array // [{ 'a': 2 }]
 
 But this doesn't work. Here's a similar method
 
-```
+```js
 var new_array = Array.prototype.slice.apply(array)
 new_array[0]['a'] = 2
 array // [{ 'a': 2 }]
 ```
 
-These both copy references so they won't work. The same thing will happend with `Object.assign([], array)`. What does work is using JSON.
+These both copy references so they won't work. The same thing will happened with `Object.assign([], array)`. What does work is using JSON.
 
-```
+```js
 var new_array = JSON.parse(JSON.stringify(array))
 new_array[0]['a'] = 2
 array // [{ 'a': 1 }]
@@ -1316,7 +1316,7 @@ array // [{ 'a': 1 }]
 
 The splat operator replaces apply, so we could try using that one as well. `let new_array = [...array]`. However, it too copies references.
 
-```
+```js
 new_array[0]['a'] = 2
 array // [{ 'a': 2 }]
 ```
@@ -1750,17 +1750,20 @@ Object.getPrototypeOf(pippin) === Dog.prototype              // true
 If we wanted to share the behavior of `Dog` with `Poodle`, you could manually set the constructor (prototype?).
 
 ```js
+function Dog () {}
+
 function Poodle () {}
 Poodle.prototype = Object.create(Dog.prototype); // Worse, but also new Dog();
 Poodle.prototype.type = "Poodle";
 
 var poodle = new Poodle();
-poodle instanceof Dog     // true
-poodle instanceof Poodle  // true
+console.log(poodle instanceof Dog);     // true
+console.log(poodle instanceof Poodle);  // true
 
-poodle.constructor === function Dog(...);           // true
+poodle.constructor;                                 // f Dog() {}
+poodle.constructor === Dog;                         // false - should be true?
 Object.getPrototypeOf(poodle) === Poodle.prototype; // true
-Dog.prototype.isPrototypeOf(poodle)                 // true
+Dog.prototype.isPrototypeOf(poodle);                // true
 ```
 
 The `Poodle` prototype is an instance of `Dog`, so `poodle` is linked to `Dog` on the prototype inheritance chain.
@@ -2055,8 +2058,8 @@ The same example, except using `apply`
 printLine.apply(kindle, [2, '.']);
 ```
 
-**Call**: **C**ount the **C**ommas (you have to count the number of arguments to match the called function)  
-**Apply**: **A**rguments as **A**rray
+**Call**: Count the Commas (you have to count the number of arguments to match the called function)  
+**Apply**: Arguments as Array
 
 `apply` can reduce the length of function parameters by organizing them into an array
 
@@ -2362,7 +2365,6 @@ obj.foo();
 
 ### Similar problem: Outer Function Referenced By Object Method Lacks Context
 
-
 ```js
 function logThis() {
   console.log(this);
@@ -2635,7 +2637,7 @@ function makeObj() {
 }
 ```
 
-Upper (or parent) scopes and available to lower (nested) scopes.
+Variables in upper (or parent) scopes are available to lower (nested) scopes.
 
 Objects within functions have the same scope as the function are they are in.
 
@@ -2693,9 +2695,12 @@ logCount();            // closure sees new value for count; logs: 2
 
 ```js
 function createAdder() {
-  let value = 0;  const add = (amount) => (value = value + amount);
-  const getValue = () => (value);  return {
-    add,    getValue,
+  let value = 0;
+  const add = (amount) => (value = value + amount);
+  const getValue = () => (value);
+  return {
+    add,
+    getValue,
   }}
 ```
 
@@ -4511,7 +4516,7 @@ This uses one event listener that checks for anchor clicks
 Open external links in a new window
 
 ```js
-$( "#list" ).on( "click", "a[href^='http']", function( event ) {
+$("#list" ).on( "click", "a[href^='http']", function( event ) {
     $( this ).attr( "target", "_blank" );
 });
 ```
@@ -4530,7 +4535,7 @@ You may have multiple click events bound to an element, but you only want one of
     $(this).off("click");
   });
 
-  $("#namespaced").on('click", highlight);
+  $("#namespaced").on("click", highlight);
 ```
 
 However you can use namespacing to only remove certain events. Below, the `alert` event will now only fire once and the `highlight` functionality will remain
@@ -4550,7 +4555,7 @@ $("#namespaced").on("click.alert" ...
   $(this).off(".alert");
 ```
 
-If you didn't want to use namespacing at all you could also could specify the handler using the event from the callback
+If you did not want to use namespacing at all you could also could specify the handler using the event from the callback
 
 ```js
   $("#namespaced").on("click", function(e) {
@@ -4791,7 +4796,7 @@ Use the `.attr()` method. As a setter method, `attr()` will change the HTML mark
 Note how `attr()` require a bit more verbose syntax.
 
 ```js
-<a href="#"' data-block="gold">Gold Sponsors</a>
+<a href="#" data-block="gold">Gold Sponsors</a>
 var $a = $('a[data-block=gold]');
 
 console.log($a.attr('data-block')); // gold
@@ -5047,11 +5052,11 @@ for (var i = 0; i < 5; i++) {
 funcs[3](); // 5
 ```
 
-The problem is there's only one `i` in the outer scope that was closed over.
+The problem is there is only one `i` in the outer scope that was closed over.
 
-If you use `for (let i = 0; i < 5; i++) {`, let declares an `i` not just for the for loop itself, but it redeclares a new `i` for each iteration of the loop. That means that closures created inside the loop iteration close over those per-iteration variables the way you'd expect.[^1]
+If you use `for (let i = 0; i < 5; i++) {`, let declares an `i` not just for the for loop itself, but it redeclares a new `i` for each iteration of the loop. That means that closures created inside the loop iteration close over those per-iteration variables the way you wouldd expect.[^1]
 
-The `for` shorthand can obscure some of this, but here's an equivalent to a `let` in a `for` header.
+The `for` shorthand can obscure some of this, but here is an equivalent to a `let` in a `for` header.
 
 ```js
 var funcs = [];
@@ -5092,7 +5097,7 @@ let a = 5;
 let objA = { a };
 ```
 
-### Splat operator
+### Splat/spread operator
 
 #### Combining / Gathering
 
@@ -5118,7 +5123,11 @@ The spread operator iterates over the properties in `objA` and `objB` and assign
 This is a useful tool in writing pure functions
 
 ```
-const oldThread = state.threads[threadIndex]; const newThread = {      ...oldThread,      messages: oldThread.messages.concat(newMessage),    };
+const oldThread = state.threads[threadIndex];
+const newThread = {
+  ...oldThread,
+  messages: oldThread.messages.concat(newMessage),    
+};
 ```
 
 - `...oldThread` copies all of the properties from `oldThread` to `newThread`:
@@ -5135,7 +5144,7 @@ let c = Object.assign( {}, objA, objB);
 
 **Copy + Overwrite**
 
-We can do the same thing in the ES6 example with assign.
+We can do the same thing in the ES6 example with `Object.assign`.
 
 ```js
 Object.assign({}, oldThread, {  messages: oldThread.messages.concat(newMessage),});
@@ -5357,14 +5366,14 @@ This code will now work without manual binding, which is convenient.
 ```js
 var person = {
   age: 29,
-  intro: () => { console.log('I'm' + this.age) }
+  intro: () => { console.log("I'm" + this.age) }
 };
 
 var intro = person.intro()
 intro() // 'I'm 29'
 ```
 
-**When it's not helpful**
+**When it is not helpful**
 
 Watch out when using this with something like jQuery - you may lose jQuery `this` or the current element in an event handler.
 
@@ -5476,7 +5485,7 @@ async function() {
 
 ### Running babel from the command line
 
-Based off an existing repo's package.json, but it should work.
+Based off an existing repo's `package.json`, but it should work.
 
 First install `babel-cli` npm module, and then you should be able to execute babel through the node modules.
 
@@ -5512,10 +5521,63 @@ Notes:
 Instead of using `airbnb-base/legacy` you might be able to use this package, but I haven't tried it:
 https://www.npmjs.com/package/eslint-config-airbnb-es5
 
-P.S
+**Library syntax errors**
 
-Make sure your tests are specified in the env option:
+Make sure your tests are specified in the env option. Same goes if you're using something like jQuery.
 https://github.com/tlvince/eslint-plugin-jasmine/issues/56
+
+**CLI**
+
+Once you've done all of the above, you can also use ESLint as a CLI if you wish. Here's how you'd do that
+in the context of your local directory/project.
+
+`./node_modules/.bin/eslint yourfile.js`
+
+https://eslint.org/docs/user-guide/getting-started#local-installation-and-usage
+
+You could also do a global install, but then you'd also have to do a global install of `eslint-config-airbnb`, and following that pattern  could get messy as you switched global ESLint configs over time and across projects.
+
+### Functional ideas
+
+#### Avoiding reassigning params (even with accumulators)
+
+Many ESLint setups [flag](https://eslint.org/docs/rules/no-param-reassignhttps://eslint.org/docs/rules/no-param-reassign) param reassignment and mutation (modifying object internals). This issue even comes up when you [using reduce](https://github.com/eslint/eslint/issues/8581), which IMO isn't a big issue. The problem is that ESLint has no way to recognize the reduce accumulator param as something safe to mutate.
+
+Say you had an `inputs` variable that looked like this:
+
+```js
+[
+  0 : {name: "progress", value: "0.0"},
+  1 : {name: "level", value: "2"}
+]
+```
+
+and you wanted to turn it into object whether the "name" value's key was "values" value. I.e
+
+```js
+[ { "progress": "0.0" }, ... ]
+```
+
+This is how you'd normally do this with reduce, but ESLint doesn't like the param re-assignment that's happening (again, as an accumulator it's probably a pretty safe object to mutate).
+
+```js
+return inputs.reduce((formObject, item) => {
+  formObject[item.name] = item.value; // eslint-disable-line no-param-reassign
+  return formObject;
+}, {});
+```
+
+What you can do instead is return a new accumulator each time.
+
+```js
+return inputs.reduce((formObject, item) => (
+  { ...formObject, [item.name]: item.value }
+), {});
+```
+
+Note the need for brackets when setting the key.
+
+https://github.com/airbnb/javascript/issues/1342
 
 ## Node
 
